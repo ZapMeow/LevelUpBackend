@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import levelUp.main.LevelUp.model.Product;
 import levelUp.main.LevelUp.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,21 +18,25 @@ public class ProductController {
     private ProductService productService;
 
     @GetMapping
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public List<Product> getAllBooks(){
         return productService.allProducts();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     public Product getProductById(@PathVariable long id){
         return productService.findProductById(id);
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public Product saveProduct(@RequestBody Product newProduct){
         return productService.saveProduct(newProduct);
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public Product updateProduct(@PathVariable long id, @RequestBody Product productToChange){
         Product currentProduct = productService.findProductById(id);
         if (currentProduct != null){
@@ -50,6 +55,7 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteProduct(@PathVariable long id){
         productService.deleteProductById(id);
     }
